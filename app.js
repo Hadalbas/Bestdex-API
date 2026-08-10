@@ -1,14 +1,19 @@
-const express = require('express')
-const cors = require('cors')
-const app = express()
+import crypto from 'node:crypto';
+if (!globalThis.crypto) {
+  globalThis.crypto = crypto;
+}
+
+import express from 'express';
+const app = express();
+
+import cors from 'cors'
 
 app.use(express.json()) //para receber dados por post
 app.use(cors()) //para permitir que nosso servidor seja acessivel por outros servidores 
 app.use(express.urlencoded({extended: true}))
 
 //EXEMPLO ESPORTES
-const Esporte = require('./models/esporte')
-
+import { Esporte } from "./models/esporte.js"
 app.get('/esportes', async (req, res) => {
     const esportes = await Esporte.find({})
     res.status(200).json(esportes)
@@ -43,8 +48,7 @@ app.delete('/esportes/:id', async (req,res) => {
 
 
 //EXEMPLO CURSOS
-const Curso = require('./models/curso')
-
+import { Curso } from "./models/curso.js"
 app.get('/cursos', async (req, res) => {
     const cursos = await Curso.find({})
     res.status(200).json(cursos)

@@ -1,5 +1,9 @@
 //EXEMPLO ESPORTES
-const Esporte = require('./models/esporte')
+// const Esporte = require('./models/esporte')
+
+// import { Esporte } from './models/User.js'
+// import Esporte from "./models/esporte.js"
+import { Esporte } from "./models/esporte.js"
 
 const esporte1 = new Esporte({
      nome: 'Futebol'
@@ -19,7 +23,9 @@ Esporte.insertMany([esporte1, esporte2])
 
 
 //EXEMPLO CURSOS
-const Curso = require('./models/curso')
+// const Curso = require('./models/curso')
+// import Curso from "./models/curso.js"
+import { Curso } from "./models/curso.js"
 
 const curso1 = new Curso({
      sigla: 'ADS',

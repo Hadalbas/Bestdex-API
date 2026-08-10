@@ -1,9 +1,7 @@
-const {mongoose} = require('../db')
+import mongoose from "../db.js"
 
 const esporteSchema = new mongoose.Schema({
     nome: String
 })
 
-const Esporte = mongoose.model('Esporte', esporteSchema)
-
-module.exports = Esporte
+export const Esporte = mongoose.model('Esporte', esporteSchema)

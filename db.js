@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose';
 
 mongoose.connect('mongodb://127.0.0.1:27017/dbProgWeb')
     .then(() => {
@@ -9,4 +9,4 @@ mongoose.connect('mongodb://127.0.0.1:27017/dbProgWeb')
         console.log(err)
     })
 
-module.exports = mongoose
+export default mongoose

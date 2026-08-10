@@ -1,4 +1,4 @@
-const {mongoose} = require('../db')
+import mongoose from "../db.js"
 
 const cursoSchema = new mongoose.Schema({
     sigla: {
@@ -8,6 +8,4 @@ const cursoSchema = new mongoose.Schema({
     nome: String
 })
 
-const Curso = mongoose.model('Curso', cursoSchema)
-
-module.exports = Curso
+export const Curso = mongoose.model('Curso', cursoSchema)
