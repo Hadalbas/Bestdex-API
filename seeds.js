@@ -1,3 +1,4 @@
+//EXEMPLO ESPORTES
 const Esporte = require('./models/esporte')
 
 const esporte1 = new Esporte({
@@ -6,6 +7,28 @@ const esporte1 = new Esporte({
 
 const esporte2 = new Esporte({
     nome: 'Esqui'
+})
+
+Esporte.insertMany([esporte1, esporte2])
+    .then(res => {
+        console.log(res)
+    })
+    .catch(e => {
+        console.log(e)
+    })
+
+
+//EXEMPLO CURSOS
+const Curso = require('./models/curso')
+
+const curso1 = new Curso({
+     sigla: 'ADS',
+     nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas'
+})
+
+const curso2 = new Curso({
+    sigla: 'TPG', 
+    nome: 'Tecnologia em Processos Gerenciais'
 })
 
 //Inserir o primeiro curso
@@ -17,11 +40,10 @@ const esporte2 = new Esporte({
 //         console.log(e)
 //     })
 
-Esporte.insertMany([esporte1, esporte2])
+Curso.insertMany([curso1, curso2])
     .then(res => {
         console.log(res)
     })
     .catch(e => {
         console.log(e)
     })
-
