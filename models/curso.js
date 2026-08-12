@@ -5,7 +5,8 @@ const cursoSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    nome: String
+    nome: String,
+    duracao: String
 })
 
 export const Curso = mongoose.model('Curso', cursoSchema)

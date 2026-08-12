@@ -7,6 +7,7 @@ import express from 'express';
 const app = express();
 
 import cors from 'cors'
+import xss from 'xss';
 
 app.use(express.json()) //para receber dados por post
 app.use(cors()) //para permitir que nosso servidor seja acessivel por outros servidores 
@@ -26,7 +27,8 @@ app.get('/esportes/:id', async (req,res) => {
 })
 
 app.post('/esportes', async (req,res) => {
-    const {nome} = req.body
+    let {nome} = req.body
+    nome = xss(nome)
     const novoEsporte = new Esporte({nome})
     await novoEsporte.save()
     res.status(201).json({})
@@ -34,7 +36,8 @@ app.post('/esportes', async (req,res) => {
 
 app.patch('/esportes/:id', async (req, res) => {
     const {id} = req.params
-    const {nome} = req.body
+    let {nome} = req.body
+    nome = xss(nome)
     await Esporte.findByIdAndUpdate(id, {nome}, {runValidators: true})
     res.status(204).json({})
 })
@@ -61,16 +64,22 @@ app.get('/cursos/:id', async (req,res) => {
 })
 
 app.post('/cursos', async (req,res) => {
-    const {sigla, nome} = req.body
-    const novoCurso = new Curso({sigla, nome})
+    let {sigla, nome, duracao} = req.body
+    sigla = xss(sigla)
+    nome = xss(nome)
+    duracao = xss(duracao)
+    const novoCurso = new Curso({sigla, nome, duracao})
     await novoCurso.save()
     res.status(201).json({})
 })
 
 app.patch('/cursos/:id', async (req, res) => {
     const {id} = req.params
-    const {sigla, nome} = req.body
-    await Curso.findByIdAndUpdate(id, {sigla, nome}, {runValidators: true})
+    let {sigla, nome, duracao} = req.body
+    sigla = xss(sigla)
+    nome = xss(nome)
+    duracao = xss(duracao)
+    await Curso.findByIdAndUpdate(id, {sigla, nome, duracao}, {runValidators: true})
     res.status(204).json({})
 })
 

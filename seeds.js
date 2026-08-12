@@ -29,12 +29,14 @@ import { Curso } from "./models/curso.js"
 
 const curso1 = new Curso({
      sigla: 'ADS',
-     nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas'
+     nome: 'Tecnologia em Análise e Desenvolvimento de Sistemas',
+     duracao: '6 semestres'
 })
 
 const curso2 = new Curso({
     sigla: 'TPG', 
-    nome: 'Tecnologia em Processos Gerenciais'
+    nome: 'Tecnologia em Processos Gerenciais',
+    duracao: '5 semestres'
 })
 
 //Inserir o primeiro curso
