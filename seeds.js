@@ -13,13 +13,13 @@ const esporte2 = new Esporte({
     nome: 'Esqui'
 })
 
-Esporte.insertMany([esporte1, esporte2])
-    .then(res => {
-        console.log(res)
-    })
-    .catch(e => {
-        console.log(e)
-    })
+// Esporte.insertMany([esporte1, esporte2])
+//     .then(res => {
+//         console.log(res)
+//     })
+//     .catch(e => {
+//         console.log(e)
+//     })
 
 
 //EXEMPLO CURSOS
@@ -48,7 +48,35 @@ const curso2 = new Curso({
 //         console.log(e)
 //     })
 
-Curso.insertMany([curso1, curso2])
+// Curso.insertMany([curso1, curso2])
+//     .then(res => {
+//         console.log(res)
+//     })
+//     .catch(e => {
+//         console.log(e)
+//     })
+
+
+//EXEMPLO NOTAS
+import { Estudante } from "./models/estudante.js"
+
+const estudante1 = new Estudante({
+     nome: 'Bruno',
+     turma: '401 Info',
+     nota1: 7,
+     nota2: 7.0,
+     nota3: 7
+})
+
+const estudante2 = new Estudante({
+     nome: 'José',
+     turma: 'Futuro Digital - Front End',
+     nota1: 7,
+     nota2: 9.0,
+     nota3: 10.0
+})
+
+Estudante.insertMany([estudante1, estudante2])
     .then(res => {
         console.log(res)
     })

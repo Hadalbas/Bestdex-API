@@ -90,6 +90,49 @@ app.delete('/cursos/:id', async (req,res) => {
 })
 
 
+//EXEMPLO NOTAS
+import { Estudante } from "./models/estudante.js"
+app.get('/estudantes', async (req, res) => {
+    const estudantes = await Estudante.find({})
+    res.status(200).json(estudantes)
+})
+
+app.get('/estudantes/:id', async (req,res) => {
+    const {id} = req.params
+    const estudante = await Estudante.findById(id)
+    res.status(200).json(estudante)
+})
+
+app.post('/estudantes', async (req,res) => {
+    let {nome, turma, nota1, nota2, nota3} = req.body
+    nome = xss(nome)
+    turma = xss(turma)
+    nota1 = xss(nota1)
+    nota2 = xss(nota2)
+    nota3 = xss(nota3)
+    const novoEstudante = new Estudante({nome, turma, nota1, nota2, nota3})
+    await novoEstudante.save()
+    res.status(201).json({})
+})
+
+app.patch('/estudantes/:id', async (req, res) => {
+    const {id} = req.params
+    let {nome, turma, nota1, nota2, nota3} = req.body
+    nome = xss(nome)
+    turma = xss(turma)
+    nota1 = xss(nota1)
+    nota2 = xss(nota2)
+    nota3 = xss(nota3)
+    await Estudante.findByIdAndUpdate(id, {nome, turma, nota1, nota2, nota3}, {runValidators: true})
+    res.status(204).json({})
+})
+
+app.delete('/estudantes/:id', async (req,res) => {
+    const {id} = req.params
+    await Estudante.findByIdAndDelete(id)
+    res.status(204).json({})
+})
+
 
 app.listen(3005, () => {
     console.log("Servidor ligado na porta 3005!")
