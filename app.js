@@ -30,8 +30,8 @@ app.post('/esportes', async (req,res) => {
     let {nome} = req.body
     nome = xss(nome)
     const novoEsporte = new Esporte({nome})
-    await novoEsporte.save()
-    res.status(201).json({})
+    const esporteCriado = await novoEsporte.save()
+    res.status(201).json(esporteCriado)    
 })
 
 app.patch('/esportes/:id', async (req, res) => {
@@ -69,8 +69,8 @@ app.post('/cursos', async (req,res) => {
     nome = xss(nome)
     duracao = xss(duracao)
     const novoCurso = new Curso({sigla, nome, duracao})
-    await novoCurso.save()
-    res.status(201).json({})
+    const cursoCriado = await novoCurso.save()
+    res.status(201).json(cursoCriado)
 })
 
 app.patch('/cursos/:id', async (req, res) => {
@@ -111,8 +111,8 @@ app.post('/estudantes', async (req,res) => {
     nota2 = xss(nota2)
     nota3 = xss(nota3)
     const novoEstudante = new Estudante({nome, turma, nota1, nota2, nota3})
-    await novoEstudante.save()
-    res.status(201).json({})
+    const estudanteCriado = await novoEstudante.save()
+    res.status(201).json(estudanteCriado)
 })
 
 app.patch('/estudantes/:id', async (req, res) => {
