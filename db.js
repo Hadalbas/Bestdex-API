@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-mongoose.connect('mongodb://127.0.0.1:27017/dbProgWeb')
+dotenv.config();
+
+mongoose.connect(process.env.DATABASE_URL)
     .then(() => {
         console.log('Conexão estabelecida com o banco!')
     })
