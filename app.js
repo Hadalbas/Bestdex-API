@@ -46,13 +46,20 @@ app.post('/login', async (req, res) => {
         // 3. Envio do JWT dentro do HTTP-only Cookie
         res.cookie('token', token, {
             httpOnly: true,
-            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
 
             // IMPORTANTE: Se sameSite for 'none', a propriedade 'secure' DEVE ser true.
             // Como a API do IFRS usa HTTPS (https://ads.osorio...), ela pode enviar cookies seguros.
             secure: true,
             maxAge: 24 * 60 * 60 * 1000
         });
+
+        // res.cookie('token', token, {
+        //     httpOnly: true,
+        //     secure: true,        // OBRIGATÓRIO por causa do HTTPS da API do IFRS
+        //     sameSite: 'none',    // OBRIGATÓRIO para cross-origin (localhost -> ifrs)
+        //     maxAge: 24 * 60 * 60 * 1000
+        // });
 
         return res.status(200).json({ message: 'Login efetuado com sucesso!' });
         // return res.status(200).json({ success: true, user: { email } });
