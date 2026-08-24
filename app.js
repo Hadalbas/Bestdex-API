@@ -40,14 +40,17 @@ app.post('/login', async (req, res) => {
             { userId: 'id_do_usuario', role: 'admin' },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
-        // const token = jwt.sign({ userId: 123 }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            // const token = jwt.sign({ userId: 123 }, process.env.JWT_SECRET, { expiresIn: '1h' });
         );
 
         // 3. Envio do JWT dentro do HTTP-only Cookie
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', // true em produção (HTTPS)
-            sameSite: 'lax',
+            sameSite: process.env.NODE_ENV === 'production' ? 'lax' : 'none',
+
+            // IMPORTANTE: Se sameSite for 'none', a propriedade 'secure' DEVE ser true.
+            // Como a API do IFRS usa HTTPS (https://ads.osorio...), ela pode enviar cookies seguros.
+            secure: true,
             maxAge: 24 * 60 * 60 * 1000
         });
 
@@ -58,16 +61,16 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  // Limpa o cookie chamado 'token'
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    // IMPORTANTE: Em alguns cenários de produção com domínios diferentes, 
-    // inclua também a propriedade 'domain' se ela tiver sido usada no login.
-  });
+    // Limpa o cookie chamado 'token'
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        // IMPORTANTE: Em alguns cenários de produção com domínios diferentes, 
+        // inclua também a propriedade 'domain' se ela tiver sido usada no login.
+    });
 
-  return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
+    return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
 });
 
 app.get('/paginadousuario', verificarToken, async (req, res) => {
