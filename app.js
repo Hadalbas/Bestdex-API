@@ -108,6 +108,11 @@ app.post('/usuarios', verificarToken, async (req, res) => {
     }
 })
 
+app.get('/usuarios', verificarToken, async (req, res) => {
+    const usuarios = await Usuario.find({})
+    res.status(200).json(usuarios)
+})
+
 // app.get('/paginadousuario', verificarToken, async (req, res) => {
 //     // res.json({ dados: 'Informações secretas' });
 //     res.json({ dados: 'Informações secretas', usuario: req.usuario });
