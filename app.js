@@ -11,14 +11,13 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import { verificarToken } from './authMiddleware.js';
 
-// Carrega as variáveis de ambiente do arquivo .env
-dotenv.config();
+dotenv.config(); // Carrega as variáveis de ambiente do arquivo .env
 
 const app = express();
 app.use(express.json()) //para receber dados por post
 app.use(cookieParser());
 // app.use(cors()) para permitir que nosso servidor seja acessivel por outros servidores 
-// IMPORTANTE: Configure o CORS para permitir credenciais (cookies) do frontend
+// Configure o CORS para permitir credenciais (cookies) do frontend
 app.use(cors({
     origin: process.env.FRONTEND_URL,
     credentials: true
@@ -27,44 +26,50 @@ app.use(express.urlencoded({ extended: true }))
 
 //O backend precisa validar os dados do usuário, gerar o token JWT e injetá-lo em um cookie criptografado de forma automática no navegador.
 // npm install express jsonwebtoken cookie-parser cors dotenv bcryptjs
-//O ponto crítico aqui é configurar o cookie como httpOnly para que ele fique invisível a scripts maliciosos no frontend.
+//Configurar o cookie como httpOnly para que ele fique invisível a scripts maliciosos no frontend.
 
+//CONTROLE DE USUÁRIOS
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // 1. Busque e valide o usuário no banco de dados (exemplo simplificado)
-    if (email === "123" && password === "123") {
+    try {
+        // 1. Busca o usuário pelo e-mail
+        const usuario = await Usuario.findOne({ email });
+        if (!usuario) {
+            return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+        }
 
-        // 2. Geração do token JWT
+        // 2. Utiliza o método auxiliar do bcrypt para verificar a senha
+        const senhaCorreta = await usuario.compararSenha(password);
+        if (!senhaCorreta) {
+            return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+        }
+
+        // 3. Se estiver tudo certo, gera o token JWT
         const token = jwt.sign(
-            { userId: 'id_do_usuario', role: 'admin' },
+            { userId: usuario._id, role: 'user' },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
-            // const token = jwt.sign({ userId: 123 }, process.env.JWT_SECRET, { expiresIn: '1h' });
         );
 
-        // 3. Envio do JWT dentro do HTTP-only Cookie
+        // 4. Envia o cookie HTTP-only
         res.cookie('token', token, {
             httpOnly: true,
-            sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
-
-            // IMPORTANTE: Se sameSite for 'none', a propriedade 'secure' DEVE ser true.
-            // Como a API do IFRS usa HTTPS (https://ads.osorio...), ela pode enviar cookies seguros.
             secure: true,
+            sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
+            path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
 
-        // res.cookie('token', token, {
-        //     httpOnly: true,
-        //     secure: true,        // OBRIGATÓRIO por causa do HTTPS da API do IFRS
-        //     sameSite: 'none',    // OBRIGATÓRIO para cross-origin (localhost -> ifrs)
-        //     maxAge: 24 * 60 * 60 * 1000
-        // });
+        // Retorna dados públicos do usuário para o front se achar necessário
+        return res.status(200).json({
+            message: 'Login efetuado com sucesso!',
+            user: { id: usuario._id, nome: usuario.nome, email: usuario.email }
+        });
 
-        return res.status(200).json({ message: 'Login efetuado com sucesso!' });
-        // return res.status(200).json({ success: true, user: { email } });
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro interno no servidor.' });
     }
-    return res.status(401).json({ error: "Credenciais inválidas" });
 });
 
 app.post('/logout', (req, res) => {
@@ -73,17 +78,42 @@ app.post('/logout', (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        // IMPORTANTE: Em alguns cenários de produção com domínios diferentes, 
-        // inclua também a propriedade 'domain' se ela tiver sido usada no login.
     });
-
     return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
 });
 
-app.get('/paginadousuario', verificarToken, async (req, res) => {
-    // res.json({ dados: 'Informações secretas' });
-    res.json({ dados: 'Informações secretas', usuario: req.usuario });
+import Usuario from './models/usuario.js';
+app.post('/usuarios', verificarToken, async (req, res) => {
+    let { nome, email, senha } = req.body;
+    nome = xss(nome)
+    email = xss(email)
+
+    try {
+        // Verifica se o e-mail já está em uso
+        const usuarioExiste = await Usuario.findOne({ email });
+        if (usuarioExiste) {
+            return res.status(400).json({ message: 'Este e-mail já está cadastrado.' });
+        }
+
+        // Cria o objeto do usuário (a senha aqui vai em texto limpo, o pre('save') vai interceptar)
+        const novoUsuario = new Usuario({ nome, email, senha });
+        const usuarioCriado = await novoUsuario.save();
+        const usuarioResponse = usuarioCriado.toObject();
+        delete usuarioResponse.senha;
+
+        res.status(201).json({ message: 'Usuário cadastrado com sucesso!', usuario: usuarioResponse });
+    } catch (error) {
+        console.error("Erro no cadastro:", error);
+        res.status(500).json({ message: 'Erro interno ao cadastrar usuário.' });
+    }
 })
+
+// app.get('/paginadousuario', verificarToken, async (req, res) => {
+//     // res.json({ dados: 'Informações secretas' });
+//     res.json({ dados: 'Informações secretas', usuario: req.usuario });
+// })
+
+
 
 
 
@@ -121,6 +151,8 @@ app.delete('/esportes/:id', async (req, res) => {
     await Esporte.findByIdAndDelete(id)
     res.status(204).json({})
 })
+
+
 
 
 
@@ -162,6 +194,9 @@ app.delete('/cursos/:id', async (req, res) => {
     await Curso.findByIdAndDelete(id)
     res.status(204).json({})
 })
+
+
+
 
 
 //EXEMPLO NOTAS
