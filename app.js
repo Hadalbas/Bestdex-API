@@ -125,12 +125,12 @@ app.patch('/usuarios/:id', verificarToken, async (req, res) => {
     nome = xss(nome)
     email = xss(email)
     await Usuario.findByIdAndUpdate(id, { nome, email }, { runValidators: true })
-    res.status(204).json({})
+    res.status(204).json({message: 'Usuário atualiza com sucesso!'})
 })
 
 app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
     const { id } = req.params
-    let { senhaAntiga, senhaNova } = req.body
+    let { email, senhaAntiga, senhaNova } = req.body
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
         return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
@@ -140,7 +140,7 @@ app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
         return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
     }
     await Usuario.findByIdAndUpdate(id, { senha: senhaNova }, { runValidators: true })
-    res.status(204).json({})
+    res.status(204).json({message: 'Senha alterada com sucesso!'})
 })
 
 app.delete('/usuarios/:id', verificarToken, async (req, res) => {
