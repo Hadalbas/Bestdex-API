@@ -55,8 +55,8 @@ app.post('/login', async (req, res) => {
         // 4. Envia o cookie HTTP-only
         res.cookie('token', token, {
             httpOnly: true,
-            secure: true,
-            sameSite: process.env.NODE_ENV == 'production' ? 'none' : 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
@@ -77,7 +77,8 @@ app.post('/logout', (req, res) => {
     res.clearCookie('token', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        path: '/'
     });
     return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
 });
@@ -109,8 +110,13 @@ app.post('/usuarios', verificarToken, async (req, res) => {
 })
 
 app.get('/usuarios', verificarToken, async (req, res) => {
-    const usuarios = await Usuario.find({})
-    res.status(200).json(usuarios)
+    try {
+        // Busca todos os usuários, mas remove o campo 'senha' do retorno
+        const usuarios = await Usuario.find({}).select('-senha');
+        return res.status(200).json(usuarios);
+    } catch (error) {
+        return res.status(500).json({ message: 'Erro ao buscar usuários.' });
+    }
 })
 
 // app.get('/paginadousuario', verificarToken, async (req, res) => {
