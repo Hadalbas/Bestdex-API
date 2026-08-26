@@ -119,10 +119,35 @@ app.get('/usuarios', verificarToken, async (req, res) => {
     }
 })
 
-// app.get('/paginadousuario', verificarToken, async (req, res) => {
-//     // res.json({ dados: 'Informações secretas' });
-//     res.json({ dados: 'Informações secretas', usuario: req.usuario });
-// })
+app.patch('/usuarios/:id', verificarToken, async (req, res) => {
+    const { id } = req.params
+    let { nome, email } = req.body
+    nome = xss(nome)
+    email = xss(email)
+    await Usuario.findByIdAndUpdate(id, { nome, email }, { runValidators: true })
+    res.status(204).json({})
+})
+
+app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
+    const { id } = req.params
+    let { senhaAntiga, senhaNova } = req.body
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+        return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+    }
+    const senhaCorreta = await usuario.compararSenha(senhaAntiga);
+    if (!senhaCorreta) {
+        return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+    }
+    await Usuario.findByIdAndUpdate(id, { senha: senhaNova }, { runValidators: true })
+    res.status(204).json({})
+})
+
+app.delete('/usuarios/:id', verificarToken, async (req, res) => {
+    const { id } = req.params
+    await Usuario.findByIdAndDelete(id)
+    res.status(204).json({})
+})
 
 
 
