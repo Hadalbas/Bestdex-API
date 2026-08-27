@@ -120,35 +120,101 @@ app.get('/usuarios', verificarToken, async (req, res) => {
 })
 
 app.patch('/usuarios/:id', verificarToken, async (req, res) => {
-    const { id } = req.params
-    let { nome, email } = req.body
-    nome = xss(nome)
-    email = xss(email)
-    await Usuario.findByIdAndUpdate(id, { nome, email }, { runValidators: true })
-    res.status(204).json({message: 'Usuário atualiza com sucesso!'})
-})
+    const { id } = req.params;
+    let { nome, email } = req.body;
+
+    // Garante que os dados existem antes de aplicar o xss para evitar crash (TypeError)
+    if (nome) nome = xss(nome);
+    if (email) email = xss(email.toLowerCase()); // Força e-mail minúsculo para consistência
+
+    try {
+        //{ new: true } para retornar o usuário atualizado
+        const usuarioAtualizado = await Usuario.findByIdAndUpdate(
+            id,
+            { nome, email },
+            { runValidators: true, new: true }
+        ).select('-senha'); // Oculta a senha por segurança
+
+        if (!usuarioAtualizado) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        return res.status(200).json({
+            message: 'Usuário atualizado com sucesso!',
+            usuario: usuarioAtualizado
+        });
+
+    } catch (error) {
+        // TRATAMENTO DE DUPLICIDADE: Caso o usuário tente mudar para um e-mail que já existe
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Este e-mail já está em uso por outro usuário.' });
+        }
+
+        console.error("Erro ao atualizar usuário:", error);
+        return res.status(500).json({ message: 'Erro interno ao atualizar usuário.' });
+    }
+});
 
 app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
-    const { id } = req.params
-    let { senhaantiga, senhanova } = req.body
-    const usuario = await Usuario.findById(id);
-    if (!usuario) {
-        return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+    const { id } = req.params;
+    const { senhaantiga, senhanova } = req.body;
+
+    try {
+        // 1. Busca o usuário pelo ID
+        const usuario = await Usuario.findById(id);
+        if (!usuario) {
+            // Se o ID não existir, mudei para 404 (Não encontrado) para fazer mais sentido semântico
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        // 2. Valida se a senha antiga está correta
+        const senhaCorreta = await usuario.compararSenha(senhaantiga);
+        if (!senhaCorreta) {
+            return res.status(401).json({ message: 'Senha atual incorreta.' });
+        }
+
+        // 3. Aplica a nova senha diretamente no objeto do documento
+        usuario.senha = senhanova;
+
+        // 4. Salva o documento. Isso OBRIGATORIAMENTE dispara o pre('save') 
+        // e criptografa a nova senha com bcrypt automaticamente!
+        await usuario.save();
+
+        // 5. Retorna status 200 (OK) já que estamos enviando uma mensagem no JSON
+        return res.status(200).json({ message: 'Senha alterada com sucesso!' });
+
+    } catch (error) {
+        console.error("Erro ao alterar senha:", error);
+        return res.status(500).json({ message: 'Erro interno ao alterar a senha.' });
     }
-    const senhaCorreta = await usuario.compararSenha(senhaantiga);
-    if (!senhaCorreta) {
-        return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
-    }
-    await Usuario.findByIdAndUpdate(id, { senha: senhanova }, { runValidators: true })
-    console.log('senha alterada: ', senhanova)
-    res.status(204).json({message: 'Senha alterada com sucesso!'})
-})
+});
 
 app.delete('/usuarios/:id', verificarToken, async (req, res) => {
-    const { id } = req.params
-    await Usuario.findByIdAndDelete(id)
-    res.status(204).json({})
-})
+    const { id } = req.params;
+
+    try {
+        // BLINDAGEM DE SEGURANÇA: Impede que um usuário apague a conta de outro
+        // O middleware 'verificarToken' injetou os dados do token em 'req.usuario'
+        // if (req.usuario.userId !== id && req.usuario.role !== 'admin') {
+        //     return res.status(403).json({ 
+        //         message: 'Acesso negado. Você não tem permissão para apagar este usuário.' 
+        //     });
+        // }
+
+        // VALIDAÇÃO DE EXISTÊNCIA: Verifica se o usuário realmente existe no banco
+        const usuarioApagado = await Usuario.findByIdAndDelete(id);
+
+        if (!usuarioApagado) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        return res.status(200).json({ message: 'Usuário apagado com sucesso!' });
+
+    } catch (error) {
+        console.error("Erro ao deletar usuário:", error);
+        return res.status(500).json({ message: 'Erro interno ao tentar apagar o usuário.' });
+    }
+});
 
 
 
