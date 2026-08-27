@@ -130,17 +130,17 @@ app.patch('/usuarios/:id', verificarToken, async (req, res) => {
 
 app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
     const { id } = req.params
-    let { senhaAntiga, senhaNova } = req.body
+    let { senhaantiga, senhanova } = req.body
     const usuario = await Usuario.findById(id);
     if (!usuario) {
         return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
     }
-    const senhaCorreta = await usuario.compararSenha(senhaAntiga);
+    const senhaCorreta = await usuario.compararSenha(senhaantiga);
     if (!senhaCorreta) {
         return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
     }
-    await Usuario.findByIdAndUpdate(id, { senha: senhaNova }, { runValidators: true })
-    console.log('senha alterada: '. senhaNova)
+    await Usuario.findByIdAndUpdate(id, { senha: senhanova }, { runValidators: true })
+    console.log('senha alterada: ', senhanova)
     res.status(204).json({message: 'Senha alterada com sucesso!'})
 })
 
