@@ -30,24 +30,24 @@ app.use(express.urlencoded({ extended: true }))
 
 //CONTROLE DE USUÁRIOS
 app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    const { name, password } = req.body;
 
     try {
         // 1. Busca o usuário pelo e-mail
-        const usuario = await Usuario.findOne({ email });
-        if (!usuario) {
-            return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+        const treinador = await Treinador.findOne({ name });
+        if (!treinador) {
+            return res.status(401).json({ message: 'Nome ou senha incorretos.' });
         }
 
         // 2. Utiliza o método auxiliar do bcrypt para verificar a senha
-        const senhaCorreta = await usuario.compararSenha(password);
+        const senhaCorreta = await treinador.compararSenha(password);
         if (!senhaCorreta) {
-            return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+            return res.status(401).json({ message: 'Nome ou senha incorretos.' });
         }
 
         // 3. Se estiver tudo certo, gera o token JWT
         const token = jwt.sign(
-            { userId: usuario._id, role: 'user' },
+            { userId: treinador._id, role: 'user' },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
@@ -64,7 +64,7 @@ app.post('/login', async (req, res) => {
         // Retorna dados públicos do usuário para o front se achar necessário
         return res.status(200).json({
             message: 'Login efetuado com sucesso!',
-            user: { id: usuario._id, nome: usuario.nome, email: usuario.email }
+            user: { id: treinador._id, nome: treinador.nome }
         });
 
     } catch (error) {
@@ -83,71 +83,69 @@ app.post('/logout', (req, res) => {
     return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
 });
 
-import Usuario from './models/usuario.js';
-app.post('/usuarios', verificarToken, async (req, res) => {
-    let { nome, email, senha } = req.body;
+import Treinador from './models/treinador.js';
+app.post('/treinadors', verificarToken, async (req, res) => {
+    let { nome, senha } = req.body;
     nome = xss(nome)
-    email = xss(email)
 
     try {
         // Verifica se o e-mail já está em uso
-        const usuarioExiste = await Usuario.findOne({ email });
-        if (usuarioExiste) {
-            return res.status(400).json({ message: 'Este e-mail já está cadastrado.' });
+        const treinadorExiste = await Treinador.findOne({ nome });
+        if (treinadorExiste) {
+            return res.status(400).json({ message: 'Este nome já está cadastrado.' });
         }
 
         // Cria o objeto do usuário (a senha aqui vai em texto limpo, o pre('save') vai interceptar)
-        const novoUsuario = new Usuario({ nome, email, senha });
-        const usuarioCriado = await novoUsuario.save();
-        const usuarioResponse = usuarioCriado.toObject();
-        delete usuarioResponse.senha;
+        const novoTreinador = new Treinador({ nome, senha });
+        const treinadorCriado = await novoTreinador.save();
+        const treinadorResponse = treinadorCriado.toObject();
+        delete treinadorResponse.senha;
 
-        res.status(201).json({ message: 'Usuário cadastrado com sucesso!', usuario: usuarioResponse });
+        res.status(201).json({ message: 'Usuário cadastrado com sucesso!', treinador: treinadorResponse });
     } catch (error) {
         console.error("Erro no cadastro:", error);
         res.status(500).json({ message: 'Erro interno ao cadastrar usuário.' });
     }
 })
 
-app.get('/usuarios', verificarToken, async (req, res) => {
+app.get('/treinadors', verificarToken, async (req, res) => {
     try {
         // Busca todos os usuários, mas remove o campo 'senha' do retorno
-        const usuarios = await Usuario.find({}).select('-senha');
-        return res.status(200).json(usuarios);
+        const treinadors = await Treinador.find({}).select('-senha');
+        return res.status(200).json(treinadors);
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao buscar usuários.' });
     }
 })
 
-app.patch('/usuarios/:id', verificarToken, async (req, res) => {
+app.patch('/treinadors/:id', verificarToken, async (req, res) => {
     const { id } = req.params;
-    let { nome, email } = req.body;
+    let { nome } = req.body;
 
     // Garante que os dados existem antes de aplicar o xss para evitar crash (TypeError)
     if (nome) nome = xss(nome);
-    if (email) email = xss(email.toLowerCase()); // Força e-mail minúsculo para consistência
 
     try {
         //{ new: true } para retornar o usuário atualizado
-        const usuarioAtualizado = await Usuario.findByIdAndUpdate(
+        const treinadorAtualizado = await Treinador.findByIdAndUpdate(
             id,
-            { nome, email },
+            { nome },
             { runValidators: true, new: true }
         ).select('-senha'); // Oculta a senha por segurança
 
-        if (!usuarioAtualizado) {
+        if (!treinadorAtualizado) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
         return res.status(200).json({
             message: 'Usuário atualizado com sucesso!',
-            usuario: usuarioAtualizado
+            treinador: treinadorAtualizado
         });
 
     } catch (error) {
         // TRATAMENTO DE DUPLICIDADE: Caso o usuário tente mudar para um e-mail que já existe
         if (error.code === 11000) {
-            return res.status(400).json({ message: 'Este e-mail já está em uso por outro usuário.' });
+            return res.status(400).json({ message: 'Este nome já está em uso por outro usuário.' });
         }
 
         console.error("Erro ao atualizar usuário:", error);
@@ -155,30 +153,30 @@ app.patch('/usuarios/:id', verificarToken, async (req, res) => {
     }
 });
 
-app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
+app.patch('/treinadors/:id/senha', verificarToken, async (req, res) => {
     const { id } = req.params;
     const { senhaantiga, senhanova } = req.body;
 
     try {
         // 1. Busca o usuário pelo ID
-        const usuario = await Usuario.findById(id);
-        if (!usuario) {
+        const treinador = await Treinador.findById(id);
+        if (!treinador) {
             // Se o ID não existir, mudei para 404 (Não encontrado) para fazer mais sentido semântico
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
         // 2. Valida se a senha antiga está correta
-        const senhaCorreta = await usuario.compararSenha(senhaantiga);
+        const senhaCorreta = await treinador.compararSenha(senhaantiga);
         if (!senhaCorreta) {
             return res.status(401).json({ message: 'Senha atual incorreta.' });
         }
 
         // 3. Aplica a nova senha diretamente no objeto do documento
-        usuario.senha = senhanova;
+        treinador.senha = senhanova;
 
         // 4. Salva o documento. Isso OBRIGATORIAMENTE dispara o pre('save') 
         // e criptografa a nova senha com bcrypt automaticamente!
-        await usuario.save();
+        await treinador.save();
 
         // 5. Retorna status 200 (OK) já que estamos enviando uma mensagem no JSON
         return res.status(200).json({ message: 'Senha alterada com sucesso!' });
@@ -189,22 +187,22 @@ app.patch('/usuarios/:id/senha', verificarToken, async (req, res) => {
     }
 });
 
-app.delete('/usuarios/:id', verificarToken, async (req, res) => {
+app.delete('/treinadores/:id', verificarToken, async (req, res) => {
     const { id } = req.params;
 
     try {
         // BLINDAGEM DE SEGURANÇA: Impede que um usuário apague a conta de outro
-        // O middleware 'verificarToken' injetou os dados do token em 'req.usuario'
-        // if (req.usuario.userId !== id && req.usuario.role !== 'admin') {
+        // O middleware 'verificarToken' injetou os dados do token em 'req.treinador'
+        // if (req.treinador.userId !== id && req.treinador.role !== 'admin') {
         //     return res.status(403).json({ 
         //         message: 'Acesso negado. Você não tem permissão para apagar este usuário.' 
         //     });
         // }
 
         // VALIDAÇÃO DE EXISTÊNCIA: Verifica se o usuário realmente existe no banco
-        const usuarioApagado = await Usuario.findByIdAndDelete(id);
+        const treinadorApagado = await Treinador.findByIdAndDelete(id);
 
-        if (!usuarioApagado) {
+        if (!treinadorApagado) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
