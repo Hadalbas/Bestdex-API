@@ -84,7 +84,7 @@ app.post('/logout', (req, res) => {
 });
 
 import Treinador from './models/treinador.js';
-app.post('/treinadors', verificarToken, async (req, res) => {
+app.post('/treinadores', verificarToken, async (req, res) => {
     let { nome, senha } = req.body;
     nome = xss(nome)
 
@@ -108,17 +108,17 @@ app.post('/treinadors', verificarToken, async (req, res) => {
     }
 })
 
-app.get('/treinadors', verificarToken, async (req, res) => {
+app.get('/treinadores', async (req, res) => {
     try {
         // Busca todos os usuários, mas remove o campo 'senha' do retorno
-        const treinadors = await Treinador.find({}).select('-senha');
-        return res.status(200).json(treinadors);
+        const treinadores = await Treinador.find({}).select('-senha');
+        return res.status(200).json(treinadores);
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao buscar usuários.' });
     }
 })
 
-app.patch('/treinadors/:id', verificarToken, async (req, res) => {
+app.patch('/treinadores/:id', verificarToken, async (req, res) => {
     const { id } = req.params;
     let { nome } = req.body;
 
@@ -153,7 +153,7 @@ app.patch('/treinadors/:id', verificarToken, async (req, res) => {
     }
 });
 
-app.patch('/treinadors/:id/senha', verificarToken, async (req, res) => {
+app.patch('/treinadores/:id/senha', verificarToken, async (req, res) => {
     const { id } = req.params;
     const { senhaantiga, senhanova } = req.body;
 
@@ -213,136 +213,6 @@ app.delete('/treinadores/:id', verificarToken, async (req, res) => {
         return res.status(500).json({ message: 'Erro interno ao tentar apagar o usuário.' });
     }
 });
-
-
-
-
-
-//EXEMPLO ESPORTES
-import { Esporte } from "./models/esporte.js"
-app.get('/esportes', async (req, res) => {
-    const esportes = await Esporte.find({})
-    res.status(200).json(esportes)
-})
-
-app.get('/esportes/:id', async (req, res) => {
-    const { id } = req.params
-    const esporte = await Esporte.findById(id)
-    res.status(200).json(esporte)
-})
-
-app.post('/esportes', async (req, res) => {
-    let { nome } = req.body
-    nome = xss(nome)
-    const novoEsporte = new Esporte({ nome })
-    const esporteCriado = await novoEsporte.save()
-    res.status(201).json(esporteCriado)
-})
-
-app.patch('/esportes/:id', async (req, res) => {
-    const { id } = req.params
-    let { nome } = req.body
-    nome = xss(nome)
-    await Esporte.findByIdAndUpdate(id, { nome }, { runValidators: true })
-    res.status(204).json({})
-})
-
-app.delete('/esportes/:id', async (req, res) => {
-    const { id } = req.params
-    await Esporte.findByIdAndDelete(id)
-    res.status(204).json({})
-})
-
-
-
-
-
-//EXEMPLO CURSOS
-import { Curso } from "./models/curso.js"
-app.get('/cursos', async (req, res) => {
-    const cursos = await Curso.find({})
-    res.status(200).json(cursos)
-})
-
-app.get('/cursos/:id', async (req, res) => {
-    const { id } = req.params
-    const curso = await Curso.findById(id)
-    res.status(200).json(curso)
-})
-
-app.post('/cursos', async (req, res) => {
-    let { sigla, nome, duracao } = req.body
-    sigla = xss(sigla)
-    nome = xss(nome)
-    duracao = xss(duracao)
-    const novoCurso = new Curso({ sigla, nome, duracao })
-    const cursoCriado = await novoCurso.save()
-    res.status(201).json(cursoCriado)
-})
-
-app.patch('/cursos/:id', async (req, res) => {
-    const { id } = req.params
-    let { sigla, nome, duracao } = req.body
-    sigla = xss(sigla)
-    nome = xss(nome)
-    duracao = xss(duracao)
-    await Curso.findByIdAndUpdate(id, { sigla, nome, duracao }, { runValidators: true })
-    res.status(204).json({})
-})
-
-app.delete('/cursos/:id', async (req, res) => {
-    const { id } = req.params
-    await Curso.findByIdAndDelete(id)
-    res.status(204).json({})
-})
-
-
-
-
-
-//EXEMPLO NOTAS
-import { Estudante } from "./models/estudante.js"
-app.get('/estudantes', async (req, res) => {
-    const estudantes = await Estudante.find({})
-    res.status(200).json(estudantes)
-})
-
-app.get('/estudantes/:id', async (req, res) => {
-    const { id } = req.params
-    const estudante = await Estudante.findById(id)
-    res.status(200).json(estudante)
-})
-
-app.post('/estudantes', async (req, res) => {
-    let { nome, turma, nota1, nota2, nota3 } = req.body
-    nome = xss(nome)
-    turma = xss(turma)
-    nota1 = xss(nota1)
-    nota2 = xss(nota2)
-    nota3 = xss(nota3)
-    const novoEstudante = new Estudante({ nome, turma, nota1, nota2, nota3 })
-    const estudanteCriado = await novoEstudante.save()
-    res.status(201).json(estudanteCriado)
-})
-
-app.patch('/estudantes/:id', async (req, res) => {
-    const { id } = req.params
-    let { nome, turma, nota1, nota2, nota3 } = req.body
-    nome = xss(nome)
-    turma = xss(turma)
-    nota1 = xss(nota1)
-    nota2 = xss(nota2)
-    nota3 = xss(nota3)
-    await Estudante.findByIdAndUpdate(id, { nome, turma, nota1, nota2, nota3 }, { runValidators: true })
-    res.status(204).json({})
-})
-
-app.delete('/estudantes/:id', async (req, res) => {
-    const { id } = req.params
-    await Estudante.findByIdAndDelete(id)
-    res.status(204).json({})
-})
-
 
 app.listen(process.env.PORT, () => {
     console.log(`Servidor ligado na porta ${process.env.PORT}!`)
