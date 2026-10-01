@@ -30,17 +30,17 @@ app.use(express.urlencoded({ extended: true }))
 
 //CONTROLE DE USUÁRIOS
 app.post('/login', async (req, res) => {
-    const { name, password } = req.body;
+    const { nome, senha } = req.body;
 
     try {
-        // 1. Busca o usuário pelo e-mail
-        const treinador = await Treinador.findOne({ name });
+        // 1. Busca o usuário pelo nome
+        const treinador = await Treinador.findOne({ nome });
         if (!treinador) {
             return res.status(401).json({ message: 'Nome ou senha incorretos.' });
         }
 
         // 2. Utiliza o método auxiliar do bcrypt para verificar a senha
-        const senhaCorreta = await treinador.compararSenha(password);
+        const senhaCorreta = await treinador.compararSenha(senha);
         if (!senhaCorreta) {
             return res.status(401).json({ message: 'Nome ou senha incorretos.' });
         }
@@ -84,12 +84,12 @@ app.post('/logout', (req, res) => {
 });
 
 import Treinador from './models/treinador.js';
-app.post('/treinadores', verificarToken, async (req, res) => {
+app.post('/treinadores', async (req, res) => {
     let { nome, senha } = req.body;
     nome = xss(nome)
 
     try {
-        // Verifica se o e-mail já está em uso
+        // Verifica se o nome já está em uso
         const treinadorExiste = await Treinador.findOne({ nome });
         if (treinadorExiste) {
             return res.status(400).json({ message: 'Este nome já está cadastrado.' });
@@ -143,7 +143,7 @@ app.patch('/treinadores/:id', verificarToken, async (req, res) => {
         });
 
     } catch (error) {
-        // TRATAMENTO DE DUPLICIDADE: Caso o usuário tente mudar para um e-mail que já existe
+        // TRATAMENTO DE DUPLICIDADE: Caso o usuário tente mudar para um nome que já existe
         if (error.code === 11000) {
             return res.status(400).json({ message: 'Este nome já está em uso por outro usuário.' });
         }
