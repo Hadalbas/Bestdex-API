@@ -63,7 +63,7 @@ app.post('/login', async (req, res) => {
 
         // Retorna dados públicos do usuário para o front se achar necessário
         return res.status(200).json({
-            message: 'Login efetuado com sucesso!',
+            message: 'Logged in successfully!',
             user: { id: treinador._id, nome: treinador.nome }
         });
 
@@ -114,12 +114,13 @@ app.get('/treinadores', async (req, res) => {
         const treinadores = await Treinador.find({}).select('-senha');
         return res.status(200).json(treinadores);
     } catch (error) {
-        return res.status(500).json({ message: 'Searching users error.' });
+        return res.status(500).json({ message: 'Error searching for users.' });
     }
 })
 
-app.get('/account/:id', verificarToken, async (req, res) => {
-    const { id } = req.params; // Obtém o ID do usuário autenticado pelo token
+app.get('/treinadores/:id', async (req, res) => {
+    const { id } = req.params; // //Obtém o ID do usuário autenticado pelo token
+    //precisa implementar checagem para garantir que seja o mesmo usuário
     try {
         // Busca o usuário e remove o campo 'senha' do retorno
         const treinador = await Treinador.findById(id).select('-senha');
@@ -141,7 +142,7 @@ app.patch('/treinadores/:id', verificarToken, async (req, res) => {
         const treinadorAtualizado = await Treinador.findByIdAndUpdate(
             id,
             { nome },
-            { runValidators: true, new: true }
+            { runValidators: true, returnDocument: after }
         ).select('-senha'); // Oculta a senha por segurança
 
         if (!treinadorAtualizado) {
