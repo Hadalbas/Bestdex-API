@@ -36,13 +36,13 @@ app.post('/login', async (req, res) => {
         // 1. Busca o usuário pelo nome
         const treinador = await Treinador.findOne({ nome });
         if (!treinador) {
-            return res.status(401).json({ message: 'Nome ou senha incorretos.' });
+            return res.status(401).json({ message: 'Incorrect name or password.' });
         }
 
         // 2. Utiliza o método auxiliar do bcrypt para verificar a senha
         const senhaCorreta = await treinador.compararSenha(senha);
         if (!senhaCorreta) {
-            return res.status(401).json({ message: 'Nome ou senha incorretos.' });
+            return res.status(401).json({ message: 'Incorrect name or password.' });
         }
 
         // 3. Se estiver tudo certo, gera o token JWT
@@ -68,7 +68,7 @@ app.post('/login', async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({ message: 'Erro interno no servidor.' });
+        return res.status(500).json({ message: 'Internal server error.' });
     }
 });
 
@@ -80,7 +80,7 @@ app.post('/logout', (req, res) => {
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         path: '/'
     });
-    return res.status(200).json({ message: 'Logout efetuado com sucesso!' });
+    return res.status(200).json({ message: 'Logout successful!' });
 });
 
 import Treinador from './models/treinador.js';
@@ -92,7 +92,7 @@ app.post('/treinadores', async (req, res) => {
         // Verifica se o nome já está em uso
         const treinadorExiste = await Treinador.findOne({ nome });
         if (treinadorExiste) {
-            return res.status(400).json({ message: 'Este nome já está cadastrado.' });
+            return res.status(400).json({ message: 'This name has already been registered.' });
         }
 
         // Cria o objeto do usuário (a senha aqui vai em texto limpo, o pre('save') vai interceptar)
@@ -101,10 +101,10 @@ app.post('/treinadores', async (req, res) => {
         const treinadorResponse = treinadorCriado.toObject();
         delete treinadorResponse.senha;
 
-        res.status(201).json({ message: 'Usuário cadastrado com sucesso!', treinador: treinadorResponse });
+        res.status(201).json({ message: 'User created sucessfully!', treinador: treinadorResponse });
     } catch (error) {
         console.error("Erro no cadastro:", error);
-        res.status(500).json({ message: 'Erro interno ao cadastrar usuário.' });
+        res.status(500).json({ message: 'Internal error in creating the user.' });
     }
 })
 
@@ -114,7 +114,18 @@ app.get('/treinadores', async (req, res) => {
         const treinadores = await Treinador.find({}).select('-senha');
         return res.status(200).json(treinadores);
     } catch (error) {
-        return res.status(500).json({ message: 'Erro ao buscar usuários.' });
+        return res.status(500).json({ message: 'Searching users error.' });
+    }
+})
+
+app.get('/account/:id', verificarToken, async (req, res) => {
+    const { id } = req.params; // Obtém o ID do usuário autenticado pelo token
+    try {
+        // Busca o usuário e remove o campo 'senha' do retorno
+        const treinador = await Treinador.findById(id).select('-senha');
+        return res.status(200).json(treinador);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching for user.' });
     }
 })
 
@@ -134,22 +145,22 @@ app.patch('/treinadores/:id', verificarToken, async (req, res) => {
         ).select('-senha'); // Oculta a senha por segurança
 
         if (!treinadorAtualizado) {
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
+            return res.status(404).json({ message: 'User not found.' });
         }
 
         return res.status(200).json({
-            message: 'Usuário atualizado com sucesso!',
+            message: 'User updated successfully!',
             treinador: treinadorAtualizado
         });
 
     } catch (error) {
         // TRATAMENTO DE DUPLICIDADE: Caso o usuário tente mudar para um nome que já existe
         if (error.code === 11000) {
-            return res.status(400).json({ message: 'Este nome já está em uso por outro usuário.' });
+            return res.status(400).json({ message: 'This name is already being used by another user.' });
         }
 
         console.error("Erro ao atualizar usuário:", error);
-        return res.status(500).json({ message: 'Erro interno ao atualizar usuário.' });
+        return res.status(500).json({ message: 'Uptading user error.' });
     }
 });
 
@@ -162,13 +173,13 @@ app.patch('/treinadores/:id/senha', verificarToken, async (req, res) => {
         const treinador = await Treinador.findById(id);
         if (!treinador) {
             // Se o ID não existir, mudei para 404 (Não encontrado) para fazer mais sentido semântico
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
+            return res.status(404).json({ message: 'User not found.' });
         }
 
         // 2. Valida se a senha antiga está correta
         const senhaCorreta = await treinador.compararSenha(senhaantiga);
         if (!senhaCorreta) {
-            return res.status(401).json({ message: 'Senha atual incorreta.' });
+            return res.status(401).json({ message: 'Wrong current password.' });
         }
 
         // 3. Aplica a nova senha diretamente no objeto do documento
@@ -203,7 +214,7 @@ app.delete('/treinadores/:id', verificarToken, async (req, res) => {
         const treinadorApagado = await Treinador.findByIdAndDelete(id);
 
         if (!treinadorApagado) {
-            return res.status(404).json({ message: 'Usuário não encontrado.' });
+            return res.status(404).json({ message: 'User not found.' });
         }
 
         return res.status(200).json({ message: 'Usuário apagado com sucesso!' });
