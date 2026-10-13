@@ -5,59 +5,61 @@ const timeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    criador: {
+        type: String,
+        required: true
+    },
     regulacao: {
         type: String,
         required: true
     },
     acessos: {
         type: Number,
-        default: 0,
-        required: true
+        default: 0
     },
     pokemons: [{
         pokemon1: {
-            required: true,
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },
@@ -73,43 +75,43 @@ const timeSchema = new mongoose.Schema({
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },
@@ -125,43 +127,43 @@ const timeSchema = new mongoose.Schema({
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },
@@ -177,43 +179,43 @@ const timeSchema = new mongoose.Schema({
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },
@@ -229,43 +231,43 @@ const timeSchema = new mongoose.Schema({
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },
@@ -281,43 +283,43 @@ const timeSchema = new mongoose.Schema({
             nickname: String,
             item: {type: String, default: "Empty"},
             ability: {type: String, required: true},
-            gender: {type: CharacterData, required: true, enum: ['f', 'm', 'x']},
+            gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
             stats: {
                 hp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 at:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 df:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sa:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sd:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 },
                 sp:{
                     type: Number, 
-                    min:[0, "O IV não pode ser menor que 0"],
-                    max:[32, "Nenhum IV pode ultrapassar 32"],
+                    min:[0, "O EV não pode ser menor que 0"],
+                    max:[32, "Nenhum EV pode ultrapassar 32"],
                     default: 0
                 }
             },

@@ -84,6 +84,7 @@ app.post('/logout', (req, res) => {
 });
 
 import Treinador from './models/treinador.js';
+import { Time } from './models/time.js';
 app.post('/treinadores', async (req, res) => {
     let { nome, senha } = req.body;
     nome = xss(nome)
@@ -236,6 +237,33 @@ app.delete('/treinadores/:id', verificarToken, async (req, res) => {
         return res.status(500).json({ message: 'Erro interno ao tentar apagar o usuário.' });
     }
 });
+
+app.get('/times', async (req, res) => {
+    try {
+        // Busca todos os times
+        const times = await Time.find({})
+        return res.status(200).json(times);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching for teams.' });
+    }
+})
+
+app.post('/times', async (req, res) => {
+    let { nome, criador, regulacao, pokemons } = req.body;
+
+    try {
+
+        // Cria o objeto do time
+        const novoTime = new Time({ nome, criador, regulacao, pokemons });
+        const timeCriado = await novoTime.save();
+        const timeResponse = timeCriado.toObject();
+        
+        res.status(201).json({ message: 'Team created sucessfully!', time: timeResponse });
+    } catch (error) {
+        console.error("Erro no cadastro:", error);
+        res.status(500).json({ message: 'Internal error in creating the team.' });
+    }
+})
 
 app.listen(process.env.PORT, () => {
     console.log(`Servidor ligado na porta ${process.env.PORT}!`)
