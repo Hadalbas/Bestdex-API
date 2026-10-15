@@ -119,16 +119,16 @@ app.get('/treinadores', async (req, res) => {
     }
 })
 
-// app.get('/treinador', async (req, res) => {
-//     let { nome } = req.body;
+app.get('/treinador', async (req, res) => {
+    let nome = req.body;
     
-//     try {
-//         const treinadorId = await Treinador.findOne({ nome: nome }).select('id');
-//         return res.status(200).json(treinadorId);
-//     } catch (error) {
-//         return res.status(500).json({ message: 'Error searching for user.' });
-//     }
-// })
+    try {
+        const treinadorId = await Treinador.findOne({ nome: nome }).select('id');
+        return res.status(200).json(treinadorId);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching for user.' });
+    }
+})
 
 app.get('/treinadores/:id', async (req, res) => {
     const { id } = req.params; // //Obtém o ID do usuário autenticado pelo token
