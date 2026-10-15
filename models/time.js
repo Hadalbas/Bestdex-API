@@ -17,8 +17,8 @@ const timeSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    pokemons: [{
-        pokemon1: {
+    pokemons: [
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -63,14 +63,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
         },
-        pokemon2: {
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -115,14 +115,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
         },
-        pokemon3: {
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -167,14 +167,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
         },
-        pokemon4: {
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -219,14 +219,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
         },
-        pokemon5: {
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -271,14 +271,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
         },
-        pokemon6: {
+        {
             species: {type: String, required: true},
             nickname: String,
             item: {type: String, default: "Empty"},
@@ -323,14 +323,14 @@ const timeSchema = new mongoose.Schema({
                     default: 0
                 }
             },
-            moves: {
-                move1: {type: String, required: true},
-                move2: {type: String},
-                move3: {type: String},
-                move4: {type: String}
-            }
-        },
-    }]
+            moves: [
+                String,
+                String,
+                String,
+                String
+            ]
+        }
+    ]
 })
 
 export const Time = mongoose.model('Time', timeSchema)

@@ -238,6 +238,8 @@ app.delete('/treinadores/:id', verificarToken, async (req, res) => {
     }
 });
 
+
+
 app.get('/times', async (req, res) => {
     try {
         // Busca todos os times
@@ -245,6 +247,33 @@ app.get('/times', async (req, res) => {
         return res.status(200).json(times);
     } catch (error) {
         return res.status(500).json({ message: 'Error searching for teams.' });
+    }
+})
+
+app.get('/times/:treinador', async (req, res) => {
+    
+    const { treinador } = req.params;
+
+    try {
+        // Busca todos os times
+        const times = await Time.find({ criador: treinador })
+        return res.status(200).json(times);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching for teams from this user.' });
+    }
+})
+
+app.get('/time/:id', async (req, res) => {
+    
+    const { id } = req.params;
+
+    try {
+        // Busca todos os times
+        await Time.findByIdAndUpdate(id, {$inc: {acessos: 1} });
+        const time = await Time.findById(id);
+        return res.status(200).json(time);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error searching for this team.' });
     }
 })
 
