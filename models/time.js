@@ -25,6 +25,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
@@ -77,6 +78,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
@@ -129,6 +131,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
@@ -181,6 +184,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
@@ -233,6 +237,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
@@ -285,6 +290,7 @@ const timeSchema = new mongoose.Schema({
             ability: {type: String, required: true},
             gender: {type: String, required: true, enum: ['f', 'm', 'x']},
             shiny: {type: Boolean, default: false},
+            nature: {type: String, default: "Serious"},
             stats: {
                 hp:{
                     type: Number, 
